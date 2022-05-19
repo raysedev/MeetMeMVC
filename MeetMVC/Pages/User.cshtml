@@ -1,0 +1,36 @@
+﻿@page "{id}"
+@model MeetMVC.Pages.UserModel
+@{
+    
+}
+
+<div class="container">
+    <div class='row'>
+        @{ 
+            foreach (var item in Model.Users)
+    {
+        if (item.UserName == Model.UserId)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <img class="card-img-top" style="width: 18rem;" src="/uploads/@item.ImagePath" alt="@item.UserName">
+                    <h5 class="card-title">@item.FirstName @item.LastName</h5>
+                    <p class="card-text">@item.Age</p>
+                    <p class="card-text">@item.Gender</p>
+                    <p class="card-text">@item.Sexuality</p>
+                    <p class="card-text">@item.City</p>
+                    <p class="card-text">@item.Country</p>
+                    <p class="card-text">@item.About</p>
+                    <a class="btn btn-primary" href="/chatHub">Message</a>
+                </div>
+            </div>      
+        }
+    }
+
+             }
+
+    </div>
+</div>
+<p>
+    @ViewBag.userid
+</p>

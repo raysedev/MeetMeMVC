@@ -1,0 +1,35 @@
+﻿@model MeetMVC.Models.InterestsViewModel
+@{
+    ViewData["Title"] = "Interests";
+ }
+
+ <link href="~/multiselect/example-styles.css" rel="stylesheet" />
+<div class="container">
+    <div class="card">
+        <div class="card-text text-center">
+            <h1>Multi Dropdownlist example</h1>
+        </div>
+        <form asp-controller="Home" asp-action="PostSelectedValues">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <select id="dropDownList-example" name="SelectedIds"
+                                asp-items="@Model.ItemList" multiple class="form-control"></select>
+
+                    </div>
+                </div>
+            </div>
+            <input type="submit" value="Save" class="btn btn-primary" />
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/multiselect/jquery.multi-select.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#dropDownList-example').multiSelect();
+        });
+    </script>
+}
+
