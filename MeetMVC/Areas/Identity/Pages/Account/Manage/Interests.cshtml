@@ -37,6 +37,18 @@
             };
         </script>
     }
+    <br />
+    <br />
+    <br />
+    <div class="form-group">
+    <ul>
+        @foreach (var interestName in Model.Input.UserInterests)
+                {
+                    <li>@interestName</li>
+                    
+                }     
+    </ul>     
+            </div>
 </body>
 
 
