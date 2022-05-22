@@ -7,7 +7,6 @@ namespace MeetMVC.Data
 
         public ApplicationUser() {
             Interests = new List<Interest>();
-            ChatMessages = new List<ChatMessage>();
         }
 
         public string FirstName { get; set; }
@@ -22,6 +21,5 @@ namespace MeetMVC.Data
         public string ImagePath { get; set; }
 
         public virtual List<Interest> Interests { get; set; }
-        public virtual List<ChatMessage> ChatMessages { get; set; }
     }
 }

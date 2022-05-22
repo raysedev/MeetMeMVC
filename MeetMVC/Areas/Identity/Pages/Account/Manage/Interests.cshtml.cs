@@ -53,11 +53,18 @@ namespace MeetMVC.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
             this.Interests = GetInterests();
+            var user = await _userManager.GetUserAsync(User);
 
             List<string> interestNames = new List<string>();
-            foreach (var interest in user.Interests)
+            /*foreach (var interest in user.Interests)
+            {
+                interestNames.Add(interest.Name);
+            }*/
+
+            var interestList = this.Context.Interests.Where(x => x.ApplicationUserId == user.Id).ToList();
+
+            foreach (var interest in interestList)
             {
                 interestNames.Add(interest.Name);
             }
@@ -67,7 +74,7 @@ namespace MeetMVC.Areas.Identity.Pages.Account.Manage
                 UserInterests = interestNames
             };
 
-            this.Message = interestNames.Count().ToString() + " + " + user.Interests.Count();
+            this.Message = interestNames.Count().ToString() + " " + user.Interests.Count();
 
             return Page();
         }

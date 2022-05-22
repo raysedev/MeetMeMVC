@@ -11,6 +11,5 @@ namespace MeetMVC.Data
         }
 
         public DbSet<Interest> Interests { get; set; }
-        public DbSet<ChatMessage> ChatMessages { get; set; }
     }
 }
