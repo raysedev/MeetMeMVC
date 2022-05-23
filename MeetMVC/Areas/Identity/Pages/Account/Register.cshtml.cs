@@ -59,6 +59,7 @@ namespace MeetMVC.Areas.Identity.Pages.Account
         public InputModel Input { get; set; }
 
         private static readonly string[] SexualitiesLst = { "Straight", "Gay" };
+        private static readonly string[] GendersLst = { "Man", "Woman", "Other" };
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -73,6 +74,7 @@ namespace MeetMVC.Areas.Identity.Pages.Account
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
         public List<SelectListItem> Sexualities { get; set; }
+        public List<SelectListItem> Genders { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -150,6 +152,7 @@ namespace MeetMVC.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             this.Sexualities = GetListOf("sexuality");
+            this.Genders = GetListOf("gender");
         }
 
         private List<SelectListItem> GetListOf(string name)
@@ -163,14 +166,18 @@ namespace MeetMVC.Areas.Identity.Pages.Account
                             Value = sexuality
                         }).ToList();
             }
-            else
+            else if (name == "gender")
             {
-                return (from gender in SexualitiesLst
+                return (from gender in GendersLst
                         select new SelectListItem
                         {
                             Text = gender,
                             Value = gender
                         }).ToList();
+            }
+            else 
+            {
+                return null;
             }
 
             //this.Interests = interests;
