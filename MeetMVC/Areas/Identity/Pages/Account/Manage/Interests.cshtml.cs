@@ -13,6 +13,7 @@ namespace MeetMVC.Areas.Identity.Pages.Account.Manage
     {
         public string Message { get; set; }
         public List<SelectListItem> Interests { get; set; }
+        public List<SelectListItem> UserInterests { get; set; }
         private ApplicationDbContext Context { get; }
         //todo readonly
         private static readonly string[] interestsLst = { "sports", "gamings", "cooking" };
@@ -32,72 +33,64 @@ namespace MeetMVC.Areas.Identity.Pages.Account.Manage
         public string Image { get; set; }
         public string Username { get; set; }
 
-        [BindProperty]
-        public InputModel Input { get; set; }
-
-        public class InputModel
-        {
-            public List<string> UserInterests { get; set; }
-        }
-
-        private List<SelectListItem> GetInterests()
+        private List<SelectListItem> GetAllInterestsAsListItems()
         {
             return (from interest in interestsLst
-                             select new SelectListItem
-                             {
-                                 Text = interest,
-                                 Value = interest
-                             }).ToList();
-            //this.Interests = interests;
+                    select new SelectListItem
+                    {
+                        Text = interest,
+                        Value = interest
+                    }).ToList();
+        }
+
+        private List<SelectListItem> GetUserInterestsAsListItems(string userId)
+        {
+            return (from interesetName in GetUserInterestsNames(userId)
+                    select new SelectListItem
+                    {
+                        Text = interesetName,
+                        Value = interesetName
+                    }).ToList();
+        }
+
+        private List<String> GetUserInterestsNames(string userId)
+        {
+            return this.Context.Interests.Where(x => x.ApplicationUserId == userId).Select(i => i.Name).ToList();
         }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            this.Interests = GetInterests();
+            this.Interests = GetAllInterestsAsListItems();
+
             var user = await _userManager.GetUserAsync(User);
-
-            List<string> interestNames = new List<string>();
-            /*foreach (var interest in user.Interests)
-            {
-                interestNames.Add(interest.Name);
-            }*/
-
-            var interestList = this.Context.Interests.Where(x => x.ApplicationUserId == user.Id).ToList();
-
-            foreach (var interest in interestList)
-            {
-                interestNames.Add(interest.Name);
-            }
-
-            Input = new InputModel
-            {
-                UserInterests = interestNames
-            };
-
-            this.Message = interestNames.Count().ToString() + " " + user.Interests.Count();
+            this.UserInterests = GetUserInterestsAsListItems(user.Id);
 
             return Page();
         }
 
         public async Task<IActionResult> OnPostSubmitAsync()
         {
+            this.Interests = GetAllInterestsAsListItems();
 
-            this.Interests = GetInterests();
             var user = await _userManager.GetUserAsync(User);
 
-            string[] interestNames = Request.Form["lstInterests"].ToString().Split(",");
-            foreach (string name in interestNames)
+            var namesOfCurrentInterests = GetUserInterestsNames(user.Id);
+
+            var namesOfSelectedInterests = Request.Form["lstInterests"].ToString().Split(",").ToHashSet();
+
+            foreach (var name in namesOfSelectedInterests)
             {
-
-                user.Interests.Add(new Interest
+                if (!namesOfCurrentInterests.Contains(name))
                 {
-                    Name = name
-                });
-    
-                this.Message += "Interest: " + name + "\\n";
+                    user.Interests.Add(new Interest
+                    {
+                        Name = name
+                    });
+                }
             }
-
             await _userManager.UpdateAsync(user);
+
+            this.UserInterests = GetUserInterestsAsListItems(user.Id);
             return RedirectToPage();
         }
     }

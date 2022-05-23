@@ -26,6 +26,13 @@
             Interests:
             <select id="lstInterests" name="lstInterests" asp-items="@Model.Interests" multiple class="form-control"></select>
             <input type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary" />
+
+            <br />
+            <br />
+            <br />
+            <label class="form-control"> Your Interests</label>
+            <select id="userInterests" name="userInterests" asp-items="@Model.UserInterests" multiple class="form-control"></select>
+
         </div>
     </form>
     @if (@Model.Message != null)
@@ -36,18 +43,6 @@
             };
         </script>
     }
-    <br />
-    <br />
-    <br />
-    <div class="form-group">
-    <ul>
-        @foreach (var interestName in Model.Input.UserInterests)
-                {
-                    <li>@interestName</li>
-                    
-                }     
-    </ul>     
-            </div>
+    
 </body>
-
 
