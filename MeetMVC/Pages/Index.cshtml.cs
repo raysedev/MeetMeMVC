@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeetMVC.Pages
@@ -45,11 +46,27 @@ namespace MeetMVC.Pages
             _logger = logger;
         }
 
+        public string InterestedGenders { get; set; }
+
         public async Task LoadAsync(ApplicationUser user)
         {
-            string interestedGenders = user.LookingFor;
+            if (user.Sexuality == "Gay")
+            {
+                InterestedGenders = user.Gender;
+            }
+            else if (user.Sexuality == "Straight" && user.Gender == "Man")
+            {
+                InterestedGenders = "Woman";
+            }
+            else if (user.Sexuality == "Straight" && user.Gender == "Woman")
+            {
+                InterestedGenders = "Man";
+            }
+
             Users = await _userManager.Users
-                .Where(item => interestedGenders.Contains(item.Gender))
+                .Where(item => InterestedGenders.Contains(item.Gender))
+                .OrderBy(item => Guid.NewGuid())
+                .Take(10)
                 .ToListAsync();
 
 

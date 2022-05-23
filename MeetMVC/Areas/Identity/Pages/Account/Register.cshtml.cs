@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
@@ -57,6 +58,8 @@ namespace MeetMVC.Areas.Identity.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
+        private static readonly string[] SexualitiesLst = { "Straight", "Gay" };
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -68,6 +71,8 @@ namespace MeetMVC.Areas.Identity.Pages.Account
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
+
+        public List<SelectListItem> Sexualities { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -144,6 +149,31 @@ namespace MeetMVC.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            this.Sexualities = GetListOf("sexuality");
+        }
+
+        private List<SelectListItem> GetListOf(string name)
+        {
+            if (name == "sexuality")
+            {
+                return (from sexuality in SexualitiesLst
+                        select new SelectListItem
+                        {
+                            Text = sexuality,
+                            Value = sexuality
+                        }).ToList();
+            }
+            else
+            {
+                return (from gender in SexualitiesLst
+                        select new SelectListItem
+                        {
+                            Text = gender,
+                            Value = gender
+                        }).ToList();
+            }
+
+            //this.Interests = interests;
         }
 
         public async Task<IActionResult> OnPostAsync(IFormFile file, string returnUrl = null)
@@ -153,8 +183,16 @@ namespace MeetMVC.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 _unitOfWork.UploadImage(file);
+
                 //var user = CreateUser();
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName, Age = Input.Age, Sexuality = Input.Sexuality, Gender = Input.Gender, City = Input.City, Country = Input.Country, About = Input.About, LookingFor = Input.LookingFor, ImagePath = file.FileName };
+                var user = new ApplicationUser { UserName = Input.Email, 
+                    Email = Input.Email, FirstName = Input.FirstName, 
+                    LastName = Input.LastName, 
+                    Age = Input.Age, Sexuality = Input.Sexuality, 
+                    Gender = Input.Gender, City = Input.City, 
+                    Country = Input.Country, About = Input.About, 
+                    LookingFor = Input.LookingFor, 
+                    ImagePath = file.FileName };
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -191,6 +229,7 @@ namespace MeetMVC.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
+            this.Sexualities = GetListOf("sexuality");
 
             // If we got this far, something failed, redisplay form
             return Page();
